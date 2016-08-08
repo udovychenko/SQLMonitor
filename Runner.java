@@ -1,19 +1,27 @@
 package Test;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class Runner {
 
     public static void main(String[] args) {
+        String host = "google.com";
+        String command = "ping -n ";
+        int requestCount = 10 ;
 
-        String ip = "google.com";
-        String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
-        String availability;
+        StringBuffer output = new StringBuffer();
 
-        availability = CheckHost.ping(ip) ? "reached" : "unreached";
-
-        System.out.println(timeStamp + " | " + ip + " | " + availability);
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec(command + requestCount + " " + host);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line = "";
+            while((line = reader.readLine()) != null){
+                output.append(line + "\n");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }
