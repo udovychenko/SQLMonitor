@@ -1,4 +1,3 @@
-package Test;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
@@ -7,57 +6,68 @@ import java.util.Date;
 
 public class Runner {
 
+    private static final int REQUEST_COUNT = 10;
+    private static final String COMMAND = "ping -n ";
+
     public static void main(String[] args) {
+
         String host = "google.com";
-        String command = "ping -n ";
-        int requestCount = 10;
-        String pingResult = "";
 
-        StringBuffer output = new StringBuffer();
+        printResult(host, ping(host));
+    }
 
-        Process p;
+    private static int ping(String host) {
+        Process process;
+
         try {
 
-            p = Runtime.getRuntime().exec(command + requestCount + " " + host);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line;
+            process = Runtime.getRuntime().exec(COMMAND + REQUEST_COUNT + " " + host);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String parsedLine;
             int i = 0;
-            ArrayList<Integer> result = new ArrayList<>();
+            ArrayList<Integer> rollupResultArray = new ArrayList<>();
 
-            while((line = reader.readLine()) != null ){
-                pingResult = line;
+            while((parsedLine = reader.readLine()) != null ){
 
-                if(line.indexOf("Request timed out") != -1){
-                    result.add(0);
+                if(parsedLine.contains("Request timed out")){
+                    rollupResultArray.add(0);
                 }
 
-                if (line.indexOf("time=") != -1 || line.indexOf("time<") != -1){
-                    result.add(parsePingTime(pingResult));
+                if (parsedLine.contains("time=") || parsedLine.contains("time<")){
+                    rollupResultArray.add(getResponseTime(parsedLine));
                 }
                 i++;
             }
             reader.close();
-            p.destroy();
+            process.destroy();
 
-            SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            System.out.println(date.format(new Date()) + " | " + host + " | " + arrayAvg(result));
+            return avg(rollupResultArray);
 
         }catch (Exception e){
+
             e.printStackTrace();
+            return -1;
+
         }
     }
 
-    public static int parsePingTime(String line){
-        return Integer.parseInt(line.substring(line.indexOf("time") + 5, line.indexOf("ms")).trim());
+    private static void printResult(String host, int avgResponse){
+
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.println(dateTimeFormat.format(new Date()) + " | " + host + " | " + avgResponse);
+
     }
 
-    public static int arrayAvg(ArrayList<Integer> array){
-        int avg;
+    private static int getResponseTime(String parsedLine){
+        return Integer.parseInt(parsedLine.substring(parsedLine.indexOf("time") + 5, parsedLine.indexOf("ms")).trim());
+    }
+
+    private static int avg(ArrayList<Integer> array){
         int sum = 0;
 
         for (Integer element : array) {
             sum += element;
         }
-        return sum/array.size();
+        return array.size() == 0 ? -1 : sum/array.size();
     }
 }
