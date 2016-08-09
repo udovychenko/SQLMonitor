@@ -8,6 +8,7 @@ public class Runner {
 
     private static final int REQUEST_COUNT = 10;
     private static final String COMMAND = "ping -n ";
+    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     public static void main(String[] args) {
 
@@ -34,7 +35,7 @@ public class Runner {
                 }
 
                 if (parsedLine.contains("time=") || parsedLine.contains("time<")){
-                    rollupResultArray.add(getResponseTime(parsedLine));
+                    rollupResultArray.add(getLatency(parsedLine));
                 }
                 i++;
             }
@@ -44,30 +45,38 @@ public class Runner {
             return avg(rollupResultArray);
 
         }catch (Exception e){
-
             e.printStackTrace();
             return -1;
-
         }
     }
 
     private static void printResult(String host, int avgResponse){
 
-        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat(DATE_TIME_FORMAT);
+        //LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)); //надо использовать такой метод
         System.out.println(dateTimeFormat.format(new Date()) + " | " + host + " | " + avgResponse);
 
     }
 
-    private static int getResponseTime(String parsedLine){
-        return Integer.parseInt(parsedLine.substring(parsedLine.indexOf("time") + 5, parsedLine.indexOf("ms")).trim());
+    private static int getLatency(String parsedLine){
+        int startIndex = parsedLine.indexOf("time") + 5;
+        int endIndex = parsedLine.indexOf("ms");
+
+        String duration = parsedLine.substring(startIndex, endIndex).trim();
+
+        return Integer.parseInt(duration);
     }
 
     private static int avg(ArrayList<Integer> array){
         int sum = 0;
 
+        if (array.isEmpty()){
+            return -1;
+        }
         for (Integer element : array) {
             sum += element;
         }
-        return array.size() == 0 ? -1 : sum/array.size();
+
+        return sum / array.size();
     }
 }
