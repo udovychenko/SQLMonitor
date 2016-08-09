@@ -1,19 +1,17 @@
 package Test;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class Runner {
 
     public static void main(String[] args) {
-        String host = "blade-14";
-        String command = "ping -l 40000 -n ";
-        int requestCount = 4;
+        String host = "google.com";
+        String command = "ping -n ";
+        int requestCount = 10;
         String pingResult = "";
-        int[] result = new int[requestCount+7];
-        int avgTime;
 
         StringBuffer output = new StringBuffer();
 
@@ -24,38 +22,42 @@ public class Runner {
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
             int i = 0;
+            ArrayList<Integer> result = new ArrayList<>();
 
             while((line = reader.readLine()) != null ){
                 pingResult = line;
-                result[i] = parsePingTime(pingResult);
-                System.out.println(result[i]);
+
+                if(line.indexOf("Request timed out") != -1){
+                    result.add(0);
+                }
+
+                if (line.indexOf("time=") != -1 || line.indexOf("time<") != -1){
+                    result.add(parsePingTime(pingResult));
+                }
                 i++;
-                //output.append(line + "\n");
             }
             reader.close();
             p.destroy();
 
-            int sum = 0;
-            for (int j = 0; j < result.length; j++) {
-                sum = sum + result[j];
-            }
-            avgTime = sum / (result.length-7);
-            System.out.println("avgTime = " + avgTime);
+            SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            System.out.println(date.format(new Date()) + " | " + host + " | " + arrayAvg(result));
 
         }catch (Exception e){
             e.printStackTrace();
         }
-
-        //System.out.println(pingResult);
     }
 
     public static int parsePingTime(String line){
-        try{
-            return Integer.parseInt(line.substring(line.indexOf("time") + 5, line.indexOf("ms")).trim());
-        }catch (Exception e) {
-            return 0;
-        }
+        return Integer.parseInt(line.substring(line.indexOf("time") + 5, line.indexOf("ms")).trim());
     }
 
+    public static int arrayAvg(ArrayList<Integer> array){
+        int avg;
+        int sum = 0;
 
+        for (Integer element : array) {
+            sum += element;
+        }
+        return sum/array.size();
+    }
 }
