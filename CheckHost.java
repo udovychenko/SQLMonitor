@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class CheckHost{
     private static final int REQUEST_COUNT = 10;
-    private static final String COMMAND = "ping -n ";
+    private static final String COMMAND = "ping -n";
     private static final int REQUEST_TIMED_OUT = -1;
 
     public int ping(String host){
