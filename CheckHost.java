@@ -1,81 +1,75 @@
+package com.udaff.hostmonitor.ping;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-class CheckHost{
+public class CheckHost{
     private static final int REQUEST_COUNT = 10;
-    private static final String COMMAND = "ping -n";
-    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    private static final String REQUEST_TIMED_OUT = "Request timed out";
+    private static final String COMMAND = "ping -n ";
+    private static final int REQUEST_TIMED_OUT = -1;
 
-    public int ping(String host) {
+    public int ping(String host){
 
+        Process process = null;
+        BufferedReader reader = null;
 
         try {
-            Process process;
             process = Runtime.getRuntime().exec(COMMAND + " " + REQUEST_COUNT + " " + host);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String parsedLine;
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            ArrayList<Integer> resultArray = new ArrayList<>();
+            String line = reader.readLine();
 
-            ArrayList<Integer> rollupResultArray = new ArrayList<>();
-
-            while((parsedLine = reader.readLine()) != null ){
-
-                if(parsedLine.contains(REQUEST_TIMED_OUT)){ // it's will be better if you put all string literal to constant (code style)
-                    rollupResultArray.add(0); // timeout it's not a zero!
+            while (line != null){
+                if(getLatencyFromString(line) != REQUEST_TIMED_OUT){
+                    resultArray.add(getLatencyFromString(line));
                 }
-
-                // both clauses can be united because now they are do some logic that related with method getLatency(..)
-                if (parsedLine.contains("time=") || parsedLine.contains("time<")){
-                    rollupResultArray.add(getLatency(parsedLine));
-                }
+                line = reader.readLine();
             }
 
-            return avg(rollupResultArray);
+            return avgLatency(resultArray);
 
         }catch (IOException e){
             e.printStackTrace();
-            return -1;
+            return REQUEST_TIMED_OUT;
         }finally {
-            if (reader != null);{
-                reader.close();
+            if (process != null){
+                process.destroy();
             }
-
-            process.destroy();
+            try {
+                if (reader != null){
+                    reader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
-    public String printResult(String host){  // unused method
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        return currentDateTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)) + " | " + host + " | " + ping(host);
+    private int getLatencyFromString(String line){
+
+           if (line.contains("time=") || line.contains("time<")){
+               int startIndex = line.indexOf("time") + 5;
+               int endIndex = line.indexOf("ms");
+               String duration = line.substring(startIndex, endIndex).trim();
+
+               return Integer.parseInt(duration);
+            }else {
+               return REQUEST_TIMED_OUT;
+           }
     }
 
-    // unsafe method. because you are able to pass any string to it.
-    private int getLatency(String parsedLine){
-        int startIndex = parsedLine.indexOf("time") + 5;
-        int endIndex = parsedLine.indexOf("ms");
-
-        String duration = parsedLine.substring(startIndex, endIndex).trim();
-
-        return Integer.parseInt(duration);
-    }
-
-    // bad argument name
-    private int avg(ArrayList<Integer> array){
+    private int avgLatency(ArrayList<Integer> resultArray){
         int sum = 0;
 
-        if (array.isEmpty()){
-            return -1; // is it correct value to show? you cam declare some constant, return it here and replace it with some string in the method "showResult()"
+        if (resultArray.isEmpty()){
+            return REQUEST_TIMED_OUT;
         }
-        for (Integer element : array) {
+        for (Integer element : resultArray) {
             sum += element;
         }
 
-        // instead of your own implementation of avg() you can use it from standard library java.lang.
-        return sum / array.size();
+        return sum / resultArray.size();
     }
 }
