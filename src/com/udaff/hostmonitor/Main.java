@@ -1,5 +1,4 @@
 package com.udaff.hostmonitor;
-//test
 
 import com.udaff.hostmonitor.ping.CheckHost;
 
