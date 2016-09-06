@@ -14,10 +14,10 @@ public class Main {
         String host = "google.com";
         int avgLatency = c.ping(host);
 
-        System.out.println(printResult(host,avgLatency));
+        System.out.println(printResult(host, avgLatency));
     }
 
-    public static String printResult(String host, int avgLatency){
+    private static String printResult(String host, int avgLatency){
         LocalDateTime currentDateTime = LocalDateTime.now();
         String outputString = currentDateTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)) + " | " + host + " | ";
 
@@ -27,5 +27,4 @@ public class Main {
             return outputString + "Request timed out";
         }
     }
-
 }
