@@ -17,7 +17,7 @@ public class Main {
         System.out.println(printResult(host, avgLatency));
     }
 
-    public static String printResult(String host, int avgLatency){
+    private static String printResult(String host, int avgLatency){
         LocalDateTime currentDateTime = LocalDateTime.now();
         String outputString = currentDateTime.format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)) + " | " + host + " | ";
 
@@ -27,5 +27,4 @@ public class Main {
             return outputString + "Request timed out";
         }
     }
-
 }
