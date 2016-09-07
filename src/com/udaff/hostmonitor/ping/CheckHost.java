@@ -72,7 +72,7 @@ public class CheckHost{
 
                return Integer.parseInt(duration);
             }else {
-               return REQUEST_TIMED_OUT; // does it timeout in this case?
+               return REQUEST_TIMED_OUT; // does it timeout in this case? Udovychenko.P - No, but I didn't want to adding an extra constant..
            }
     }
 
