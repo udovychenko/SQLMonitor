@@ -14,7 +14,7 @@ public class Main {
         String host = "google.com";
         int avgLatency = c.ping(host);
 
-        System.out.println(printResult(host,avgLatency));
+        System.out.println(printResult(host, avgLatency));
     }
 
     public static String printResult(String host, int avgLatency){

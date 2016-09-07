@@ -22,8 +22,8 @@ public class CheckHost{
             String line = reader.readLine();
 
             while (line != null){
-                if(getLatencyFromString(line) != REQUEST_TIMED_OUT){
-                    resultArray.add(getLatencyFromString(line));
+                if(parseLatencyFromString(line) != REQUEST_TIMED_OUT){
+                    resultArray.add(parseLatencyFromString(line));
                 }
                 line = reader.readLine();
             }
@@ -47,7 +47,7 @@ public class CheckHost{
         }
     }
 
-    private int getLatencyFromString(String line){
+    private int parseLatencyFromString(String line){
 
            if (line.contains("time=") || line.contains("time<")){
                int startIndex = line.indexOf("time") + 5;
