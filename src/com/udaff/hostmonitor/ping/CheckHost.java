@@ -4,26 +4,35 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CheckHost{
     private static final int REQUEST_COUNT = 10;
-    private static final String COMMAND = "ping -n";
     private static final int REQUEST_TIMED_OUT = -1;
+    private static final String COMMAND = "ping -n %d %s";
 
     public int ping(String host){
 
         Process process = null;
         BufferedReader reader = null;
+        String command = String.format(COMMAND, REQUEST_COUNT, host);
 
         try { // did you know what does 'try' do and why you should to use it?
-            process = Runtime.getRuntime().exec(COMMAND + " " + REQUEST_COUNT + " " + host);
-            // it's would be better to use patterns instead of string concatenation.
-            // "ping -n %d %s" - this is pattern for your case.
-            // Please make an attempt to find out how to use it
+            process = Runtime.getRuntime().exec(command);
+/*
+             Udovychenko.P  - FIXED
+             it's would be better to use patterns instead of string concatenation.
+             "ping -n %d %s" - this is pattern for your case.
+             Please make an attempt to find out how to use it
+*/
             reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            ArrayList<Integer> resultArray = new ArrayList<>();
-            // It's important to use interfaces instead of implementation when you declare a variable
-            // It's newbies mistake that should be eliminated.
+            List<Integer> resultArray = new ArrayList<>();
+/*
+             Udovychenko.P  - FIXED
+             It's important to use interfaces instead of implementation when you declare a variable
+             It's newbies mistake that should be eliminated.
+*/
+
             String line = reader.readLine();
 
             while (line != null){
@@ -67,7 +76,7 @@ public class CheckHost{
            }
     }
 
-    private int avgLatency(ArrayList<Integer> resultArray){
+    private int avgLatency(List<Integer> resultArray){
         int sum = 0;
 
         if (resultArray.isEmpty()){
