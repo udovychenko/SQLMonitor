@@ -1,4 +1,7 @@
 package com.udaff.hostmonitor;
+// package name doesn't match your directories.
+// You're should to see highlighting on your package name on your IDE
+// in fact you're made package src.com.udaff.hostmonitor
 
 import com.udaff.hostmonitor.ping.CheckHost;
 
@@ -12,7 +15,18 @@ public class Main {
 
         CheckHost c = new CheckHost();
         String host = "google.com";
+        // try to use argument 'args' to pass url of target host.
+        // and use 'default host' if you didn't pass any host
         int avgLatency = c.ping(host);
+        // it's better to use some 'wrapper class' to return result from an 'util-method'.
+
+        // In fact method ping can return a lot of useful information and you'll need it
+        // in future.
+
+        // Method 'printResult' can be overloaded and be able to operate with many result-wrappers
+        // in one common way.
+
+        // todo: please learn a bit about 'overrided' and 'overloaded' methods.
 
         System.out.println(printResult(host, avgLatency));
     }

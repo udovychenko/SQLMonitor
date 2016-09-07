@@ -15,10 +15,15 @@ public class CheckHost{
         Process process = null;
         BufferedReader reader = null;
 
-        try {
+        try { // did you know what does 'try' do and why you should to use it?
             process = Runtime.getRuntime().exec(COMMAND + " " + REQUEST_COUNT + " " + host);
+            // it's would be better to use patterns instead of string concatenation.
+            // "ping -n %d %s" - this is pattern for your case.
+            // Please make an attempt to find out how to use it
             reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             ArrayList<Integer> resultArray = new ArrayList<>();
+            // It's important to use interfaces instead of implementation when you declare a variable
+            // It's newbies mistake that should be eliminated.
             String line = reader.readLine();
 
             while (line != null){
@@ -33,6 +38,8 @@ public class CheckHost{
         }catch (IOException e){
             e.printStackTrace();
             return REQUEST_TIMED_OUT;
+            // you've wrote catch-block but for why?
+            // which aim does it have? What do it do by design?
         }finally {
             if (process != null){
                 process.destroy();
@@ -56,7 +63,7 @@ public class CheckHost{
 
                return Integer.parseInt(duration);
             }else {
-               return REQUEST_TIMED_OUT;
+               return REQUEST_TIMED_OUT; // does it timeout in this case?
            }
     }
 
