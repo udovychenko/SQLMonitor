@@ -1,25 +1,37 @@
 package com.udaff.hostmonitor;
 /*
-  - Udovychenko.P  - No, because "src" is marked as "Source root folder" in IDE
+    Udovychenko.P  - No, because "src" is marked as "Source root folder" in IDE
     and package name doesn't highlighting
  package name doesn't match your directories.
  You're should to see highlighting on your package name on your IDE
  in fact you're made package src.com.udaff.hostmonitor
 */
 
-
+import com.udaff.hostmonitor.ping.CheckHost;
 import com.udaff.hostmonitor.util.Util;
 
 public class Main {
 
     public static void main(String[] args) {
+        CheckHost c = new CheckHost();
+        String host;
+        int avgLatency;
 
+        if (args.length == 0){
+            host = Util.DEFAULT_HOST;
+        }else{
+            host = args[0];
+        }
 
-        Util util = new Util();
-        System.out.println(util.showResult(args[0], util.ping(args)));
+        avgLatency = c.ping(host);
 
-        // try to use argument 'args' to pass url of target host.
-        // and use 'default host' if you didn't pass any host
+        System.out.println(Util.showResult(host, avgLatency));
+
+/*
+        Udovychenko.P  - horrible decision, but it's working!
+         try to use argument 'args' to pass url of target host.
+         and use 'default host' if you didn't pass any host
+*/
 
         // it's better to use some 'wrapper class' to return result from an 'util-method'.
 
