@@ -11,56 +11,38 @@ public class CheckHost{
     private static final int REQUEST_TIMED_OUT = -1;
     private static final String COMMAND = "ping -n %d %s";
 
-    public int ping(String host){
+    public int ping(String host) throws IOException {
 
-        Process process = null;
-        BufferedReader reader = null;
         String command = String.format(COMMAND, REQUEST_COUNT, host);
-
-        try { // did you know what does 'try' do and why you should to use it?
-            process = Runtime.getRuntime().exec(command);
+        // did you know what does 'try' do and why you should to use it?
 /*
              Udovychenko.P  - FIXED
              it's would be better to use patterns instead of string concatenation.
              "ping -n %d %s" - this is pattern for your case.
              Please make an attempt to find out how to use it
 */
-            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            List<Integer> resultArray = new ArrayList<>();
+        Process process = Runtime.getRuntime().exec(command);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+        List<Integer> resultArray = new ArrayList<>();
 /*
              Udovychenko.P  - FIXED
              It's important to use interfaces instead of implementation when you declare a variable
              It's newbies mistake that should be eliminated.
 */
+        String line = reader.readLine();
 
-            String line = reader.readLine();
-
-            while (line != null){
-                if(parseLatencyFromString(line) != REQUEST_TIMED_OUT){
-                    resultArray.add(parseLatencyFromString(line));
-                }
-                line = reader.readLine();
+        while (line != null){
+            if(parseLatencyFromString(line) != REQUEST_TIMED_OUT){
+                resultArray.add(parseLatencyFromString(line));
             }
-
-            return avgLatency(resultArray);
-
-        }catch (IOException e){
-            e.printStackTrace();
-            return REQUEST_TIMED_OUT;
-            // you've wrote catch-block but for why?
-            // which aim does it have? What do it do by design?
-        }finally {
-            if (process != null){
-                process.destroy();
-            }
-            try {
-                if (reader != null){
-                    reader.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            line = reader.readLine();
         }
+
+        reader.close();
+        process.destroy();
+
+        return avgLatency(resultArray);
     }
 
     private int parseLatencyFromString(String line){
