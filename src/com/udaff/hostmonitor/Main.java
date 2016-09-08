@@ -9,10 +9,11 @@ package com.udaff.hostmonitor;
 
 import com.udaff.hostmonitor.ping.CheckHost;
 import com.udaff.hostmonitor.util.Util;
+import java.io.IOException;
 
 public class Main {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
 
         CheckHost c = new CheckHost();
         String host;
