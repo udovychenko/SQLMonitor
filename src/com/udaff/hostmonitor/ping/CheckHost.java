@@ -1,5 +1,7 @@
 package com.udaff.hostmonitor.ping;
 
+import com.udaff.hostmonitor.util.Util;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -54,7 +56,11 @@ public class CheckHost{
 
                return Integer.parseInt(duration);
             }else {
-               return REQUEST_TIMED_OUT; // does it timeout in this case? Udovychenko.P - No, but I didn't want to adding an extra constant..
+               return REQUEST_TIMED_OUT;
+/*
+                Udovychenko.P - No, but I didn't want to adding an extra constant..
+                does it timeout in this case?
+*/
            }
     }
 

@@ -10,11 +10,9 @@ package com.udaff.hostmonitor;
 import com.udaff.hostmonitor.ping.CheckHost;
 import com.udaff.hostmonitor.util.Util;
 
-import java.io.IOException;
-
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 
         CheckHost c = new CheckHost();
         String host;
@@ -29,13 +27,11 @@ public class Main {
         avgLatency = c.ping(host);
 
         System.out.println(Util.showResult(host, avgLatency));
-
 /*
         Udovychenko.P  - horrible decision, but it's working!
          try to use argument 'args' to pass url of target host.
          and use 'default host' if you didn't pass any host
 */
-
         // it's better to use some 'wrapper class' to return result from an 'util-method'.
 
         // In fact method ping can return a lot of useful information and you'll need it
@@ -46,5 +42,4 @@ public class Main {
 
         // todo: please learn a bit about 'overrided' and 'overloaded' methods.
     }
-
 }
